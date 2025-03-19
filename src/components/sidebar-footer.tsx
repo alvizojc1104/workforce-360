@@ -12,7 +12,8 @@ import { Loader2, LogOut, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import api from "@/services/axios";
+import api from "@/api/axios";
+import { useAuth } from "@/hooks/use-auth";
 
 const handleLogout = async (navigate: NavigateFunction) => {
 	try {
@@ -33,9 +34,13 @@ const handleLogout = async (navigate: NavigateFunction) => {
 
 export default function NavFooter() {
 	const navigate = useNavigate();
+	const { logout: authLogout } = useAuth();
 	const logout = useMutation({
 		mutationKey: ["logout"],
 		mutationFn: () => handleLogout(navigate),
+		onSuccess() {
+			authLogout();
+		},
 	});
 	return (
 		<section>

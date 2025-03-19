@@ -13,6 +13,7 @@ import Schedule from "./pages/schedule";
 import ProtectRoutes from "./protected-routes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AuthProvider from "./providers/auth-provider";
+import { ThemeProvider } from "./providers/theme-provider";
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -72,7 +73,9 @@ export default function App() {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<AuthProvider>
-				<RouterProvider router={router} />
+				<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+					<RouterProvider router={router} />
+				</ThemeProvider>
 			</AuthProvider>
 		</QueryClientProvider>
 	);

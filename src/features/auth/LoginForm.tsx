@@ -11,21 +11,21 @@ import {
 	FormControl,
 	FormField,
 	FormItem,
-	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Loader2, Lock, Mail } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { APIError } from "@/types/error";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useAuth } from "@/hooks/use-auth";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const API = import.meta.env.VITE_BACKEND_URL;
 
 const loginSchema = z.object({
-	email: z.string().email({ message: "Invalid email address." }),
+	emailOrUserName: z.string().email({ message: "Invalid email address." }),
 	password: z.string(),
 });
 
@@ -57,20 +57,20 @@ export default function LoginForm({
 
 			if (!response.data.accessToken || !response.data.refreshToken) {
 				throw new Error("Invalid response from server.");
-				
 			}
 
 			localStorage.setItem("authToken", response.data.accessToken);
 			localStorage.setItem("refreshToken", response.data.refreshToken);
-
 			login(loginCredentials);
-			navigate("/dashboard");
 		},
-		
+		onSuccess: () => {
+			form.reset();
+			navigate({ pathname: "/dashboard" }, { replace: true });
+		},
 	});
 
 	return (
-		<div className={cn("flex flex-col gap-6", className)} {...props}>
+		<div className={cn("flex flex-col gap-4", className)} {...props}>
 			<Card className="overflow-hidden p-0 ">
 				<CardContent className="grid p-0 md:grid-cols-2">
 					<Form {...form}>
@@ -85,8 +85,9 @@ export default function LoginForm({
 									<h1 className="text-2xl font-bold">
 										Welcome back
 									</h1>
-									<p className="text-muted-foreground text-balance">
-										Login to your DW 2025 account
+									<p className="text-muted-foreground text-balance text-sm">
+										Sign in to access your Workforce360
+										dashboard
 									</p>
 									{loginAttempt.isError && (
 										<div className="border mt-4 border-red-400 p-2 rounded-lg w-full">
@@ -100,51 +101,49 @@ export default function LoginForm({
 										</div>
 									)}
 								</div>
-
-								<FormField
-									control={form.control}
-									name="email"
-									render={({ field }) => (
-										<div className="grid gap-3">
+								<div className="flex flex-col gap-4">
+									<FormField
+										control={form.control}
+										name="emailOrUserName"
+										render={({ field }) => (
 											<FormItem>
-												<FormLabel htmlFor="email">
-													Email
-												</FormLabel>
 												<FormControl>
-													<Input
-														autoCorrect="off"
-														{...field}
-														id="email"
-														placeholder="dw@example.com"
-														required
-													/>
+													<div className="relative">
+														<Input
+															autoCorrect="off"
+															{...field}
+															id="email"
+															placeholder="Email or username"
+															className="peer ps-9"
+															required
+														/>
+														<div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
+															<Mail
+																size={16}
+																aria-hidden="true"
+															/>
+														</div>
+													</div>
 												</FormControl>
 												<FormMessage />
 											</FormItem>
-										</div>
-									)}
-								/>
-								<div className="grid gap-3">
-									<div className="flex items-center">
-										<Label htmlFor="password">
-											Password
-										</Label>
-										<a
-											href="#"
-											className="ml-auto text-sm underline-offset-2 hover:underline"
-										>
-											Forgot your password?
-										</a>
-									</div>
+										)}
+									/>
 									<FormField
 										control={form.control}
 										name="password"
 										render={({ field }) => (
 											<FormItem>
 												<div className="relative">
+													<div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
+														<Lock
+															size={16}
+															aria-hidden="true"
+														/>
+													</div>
 													<Input
 														{...field}
-														className="pe-9"
+														className="peer ps-9"
 														placeholder="Password"
 														type={
 															isVisible
@@ -182,6 +181,24 @@ export default function LoginForm({
 											</FormItem>
 										)}
 									/>
+								</div>
+								<div className="flex items-center justify-between">
+									<div className="flex items-center space-x-2">
+										<Checkbox id="remember-me" />
+										<Label
+											htmlFor="remember-me"
+											className="text-xs font-normal text-foreground/70 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+										>
+											Remember me
+										</Label>
+									</div>
+
+									<Link
+										to="#"
+										className="ml-auto text-xs underline-offset-2 hover:underline"
+									>
+										Forgot your password?
+									</Link>
 								</div>
 								<Button
 									type="submit"
@@ -231,12 +248,14 @@ export default function LoginForm({
 						</form>
 					</Form>
 
-					<div className="bg-muted relative hidden md:block">
-						<img
-							src="/payroll.svg"
-							alt="Image"
-							className="absolute inset-0 bg-foreground h-full w-full object-contain dark:brightness-[0.2] dark:grayscale"
-						/>
+					<div className="bg-muted relative hidden md:flex items-center justify-center">
+						<div className=" w-[70%] mx-auto">
+							<img
+								src="/workforce.svg"
+								alt="Image"
+								className="inset-0 h-full w-full object-contain dark:brightness-[0.2] dark:grayscale"
+							/>
+						</div>
 					</div>
 				</CardContent>
 			</Card>

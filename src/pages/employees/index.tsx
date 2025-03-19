@@ -1,6 +1,6 @@
 import DataTable from "@/components/data-table";
-import { employeeColumnsDef } from "@/features/data-tables/employee-columns";
-import { DataTableSkeleton } from "@/skeletons/data-table";
+import { employeeColumnsDef } from "@/features/employees/data-table-columns/employee-columns";
+import { DataTableSkeleton } from "@/components/skeletons/data-table";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -16,7 +16,7 @@ export default function Employees() {
 	});
 
 	return (
-		<div className="p-4">
+		<div className="p-4 max-w-screen">
 			{users.isLoading && <DataTableSkeleton />}
 			{users.isSuccess && (
 				<DataTable columns={employeeColumnsDef} data={users.data} />

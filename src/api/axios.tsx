@@ -1,4 +1,6 @@
 import axios from "axios";
+import { store } from "@/store";
+import { login } from "@/features/auth/auth-slice";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -55,6 +57,14 @@ api.interceptors.response.use(
 				localStorage.setItem("authToken", tokens.accessToken);
 				localStorage.setItem("refreshToken", tokens.refreshToken);
 				originalRequest.headers.Authorization = `Bearer ${tokens.accessToken}`;
+
+				store.dispatch(
+					login({
+						accessToken: tokens.accessToken,
+						refreshToken: tokens.refreshToken,
+						user: tokens.user,
+					})
+				);
 				return api(originalRequest);
 			} catch (refreshError) {
 				return Promise.reject(refreshError);

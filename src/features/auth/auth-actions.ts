@@ -1,8 +1,8 @@
 export enum AuthActionTypes {
-	LOGIN = "login",
-	LOGOUT = "logout",
-	REFRESH = "refresh",
-	SET_LOADING = "setLoading",
-	SET_ERROR = "setError",
-	SET_EMAIL = "setEmail",
+	LOGIN = "auth/login",
+	LOGOUT = "auth/logout",
+	REFRESH = "auth/refresh",
+	SET_LOADING = "auth/setLoading",
+	SET_ERROR = "auth/setError",
+	SET_EMAIL = "auth/setEmail",
 }

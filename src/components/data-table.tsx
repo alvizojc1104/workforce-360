@@ -129,7 +129,7 @@ export default function DataTable<TData, TValue>({
 						onValueChange={handleSearchColumnChange}
 					>
 						<SelectTrigger className="w-[130px] capitalize">
-							<SelectValue placeholder="Category" />
+							<SelectValue placeholder="Search" />
 						</SelectTrigger>
 						<SelectContent>
 							<SelectGroup>
@@ -254,10 +254,14 @@ export default function DataTable<TData, TValue>({
 				</Table>
 			</div>
 			<div className="flex items-center justify-between px-2 mt-2">
-				<div className="flex-1 text-sm text-muted-foreground">
-					{table.getFilteredSelectedRowModel().rows.length} of{" "}
-					{table.getFilteredRowModel().rows.length} row(s) selected.
-				</div>
+				{table.getFilteredSelectedRowModel().rows.length > 0 && (
+					<div className="flex-1 text-sm text-muted-foreground">
+						{table.getFilteredSelectedRowModel().rows.length} of{" "}
+						{table.getFilteredRowModel().rows.length} row(s)
+						selected.
+					</div>
+				)}
+				<div></div>
 				<div className="flex items-center space-x-6 lg:space-x-8">
 					<div className="flex items-center space-x-2">
 						<p className="text-sm font-medium">Rows per page</p>
@@ -293,7 +297,9 @@ export default function DataTable<TData, TValue>({
 							className="w-fit"
 							value={table.getState().pagination.pageIndex + 1}
 							onChange={(e) => {
-								const page = e.target.value ? Number(e.target.value) - 1 : 0;
+								const page = e.target.value
+									? Number(e.target.value) - 1
+									: 0;
 								table.setPageIndex(page);
 							}}
 							min={0}
@@ -304,7 +310,7 @@ export default function DataTable<TData, TValue>({
 						Page {table.getState().pagination.pageIndex + 1} of{" "}
 						{table.getPageCount()}
 					</div>
-					<div className="flex items-center space-x-2">
+					<div className="grid grid-cols-1 md:grid-cols-4 gap-2">
 						<Button
 							variant="outline"
 							className="hidden h-8 w-8 p-0 lg:flex"
@@ -346,7 +352,6 @@ export default function DataTable<TData, TValue>({
 					</div>
 				</div>
 			</div>
-		
 		</div>
 	);
 }

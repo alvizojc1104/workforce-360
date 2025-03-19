@@ -21,9 +21,17 @@ import {
 	DollarSign,
 	Users,
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import {
+	Link,
+	NavigateFunction,
+	useLocation,
+	useNavigate,
+} from "react-router-dom";
 import { Logo } from "./logo";
-import NavFooter from "./sidebar-footer";
+import api from "@/api/axios";
+import { useMutation } from "@tanstack/react-query";
+import { NavUser } from "./nav-user";
+import { useAuth } from "@/hooks/use-auth";
 
 const navigation = {
 	versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
@@ -81,8 +89,34 @@ const navigation = {
 	],
 };
 
+const handleLogout = async (navigate: NavigateFunction) => {
+	try {
+		const refreshToken = localStorage.getItem("refreshToken");
+		await api.post("/auth/logout", {
+			refreshToken: refreshToken,
+		});
+
+		localStorage.removeItem("authToken");
+		localStorage.removeItem("refreshToken");
+		navigate("/login");
+	} catch (error) {
+		console.error(error);
+		alert("Logout failed");
+	}
+};
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const location = useLocation();
+	const navigate = useNavigate();
+	const { auth, logout } = useAuth();
+	const logoutMutation = useMutation({
+		mutationKey: ["logout"],
+		mutationFn: () => handleLogout(navigate),
+		onSuccess() {
+			logout();
+		},
+	});
+
 	return (
 		<Sidebar {...props}>
 			<SidebarHeader>
@@ -115,7 +149,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				))}
 			</SidebarContent>
 			<SidebarFooter>
-				<NavFooter />
+				<NavUser
+					logout={logoutMutation}
+					key={"nav-user-dropdown"}
+					user={{
+						avatar: "/workforce.svg",
+						email: auth.user.email,
+						name: "Mike Alvizo",
+					}}
+				/>
 			</SidebarFooter>
 			<SidebarRail />
 		</Sidebar>

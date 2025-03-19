@@ -41,6 +41,10 @@ const authenticationSlice = createSlice({
 			};
 			state.isLoading = false;
 		},
+		updateTokens: (state, action: PayloadAction<AuthState>) => {
+			state.accessToken = action.payload.accessToken;
+			state.refreshToken = action.payload.refreshToken;
+		},
 	},
 });
 
