@@ -1,6 +1,6 @@
 import axios from "axios";
 import { store } from "@/store";
-import { login } from "@/features/auth/auth-slice";
+import { login, logout } from "@/features/auth/auth-slice";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -8,26 +8,49 @@ if (!BACKEND_URL) {
 	throw new Error("An error occurred while getting backend URL.");
 }
 
-const api = axios.create({
+export const api = axios.create({
 	baseURL: BACKEND_URL,
 	headers: {
 		"Content-Type": "application/json",
-		Authorization: `Bearer ${localStorage.getItem("authToken")}`,
 	},
 	withCredentials: true,
 });
 
+api.interceptors.request.use((config) => {
+	const state = store.getState();
+	const token = state.auth.accessToken; // Assuming 'auth' slice has 'accessToken'
+	if (token) {
+		config.headers.Authorization = `Bearer ${token}`;
+	}
+	return config;
+});
+
+export const publicApi = axios.create({
+	baseURL: BACKEND_URL,
+});
+
 const refreshToken = async () => {
 	try {
+		const state = store.getState();
+		const refreshToken = state.auth.refreshToken;
 		const response = await axios.post(
-			`${BACKEND_URL}/auth/refresh`,
+			`${BACKEND_URL}/account/auth/refresh`,
 			{
-				refreshToken: localStorage.getItem("refreshToken"),
+				refreshToken: refreshToken,
 			},
 			{ withCredentials: true }
 		);
 		return response.data;
 	} catch (error) {
+		if (
+			axios.isAxiosError(error) &&
+			error.response &&
+			error.response.status === 401
+		) {
+			// If refresh token is invalid or expired, log out the user
+			store.dispatch(logout());
+			window.location.href = "/login";
+		}
 		console.error("Failed to refresh token", error);
 		throw error;
 	}
@@ -36,8 +59,11 @@ const refreshToken = async () => {
 api.interceptors.request.use(
 	(config) => {
 		try {
-			const token = localStorage.getItem("authToken");
-			config.headers.Authorization = `Bearer ${token}`;
+			const state = store.getState();
+			const token = state.auth.accessToken;
+			if (token) {
+				config.headers.Authorization = `Bearer ${token}`;
+			}
 		} catch (error) {
 			console.error(error);
 		}
@@ -63,6 +89,7 @@ api.interceptors.response.use(
 						accessToken: tokens.accessToken,
 						refreshToken: tokens.refreshToken,
 						user: tokens.user,
+						roles: tokens.roles,
 					})
 				);
 				return api(originalRequest);
@@ -73,5 +100,3 @@ api.interceptors.response.use(
 		return Promise.reject(error);
 	}
 );
-
-export default api;

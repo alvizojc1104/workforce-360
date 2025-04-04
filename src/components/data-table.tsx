@@ -54,11 +54,13 @@ import { SearchIcon } from "lucide-react";
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
+	extraElements?: React.ReactNode;
 }
 
 export default function DataTable<TData, TValue>({
 	columns,
 	data,
+	extraElements,
 }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] =
@@ -105,7 +107,7 @@ export default function DataTable<TData, TValue>({
 
 	return (
 		<div>
-			<div className="flex items-center py-4">
+			<div className="flex items-center justify-between py-4">
 				<div className="flex items-center space-x-4">
 					<div className="relative">
 						<Input
@@ -199,6 +201,7 @@ export default function DataTable<TData, TValue>({
 							})}
 					</DropdownMenuContent>
 				</DropdownMenu>
+				{extraElements && extraElements}
 			</div>
 			<div className="rounded-md border">
 				<Table>

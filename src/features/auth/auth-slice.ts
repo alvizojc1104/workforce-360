@@ -9,9 +9,16 @@ const initialState: AuthState = {
 	error: null,
 	user: {
 		email: "",
-		id: "",
+		roles: [],
+		employeeId: "",
+		exp: 0,
+		iat: 0,
+		sub: "",
+		refreshToken: "",
 	},
+	roles: [],
 };
+
 const authenticationSlice = createSlice({
 	name: "auth",
 	initialState: initialState,
@@ -23,11 +30,10 @@ const authenticationSlice = createSlice({
 			>
 		) => {
 			state.isLoading = true;
-			state.user = action.payload.user;
 			state.accessToken = action.payload.accessToken;
 			state.refreshToken = action.payload.refreshToken;
 			state.isAuthenticated = true;
-			state.error = null;
+			state.user = action.payload.user;
 			state.isLoading = false;
 		},
 		logout: (state) => {
@@ -37,7 +43,12 @@ const authenticationSlice = createSlice({
 			state.isAuthenticated = false;
 			state.user = {
 				email: "",
-				id: "",
+				roles: [],
+				employeeId: "",
+				exp: 0,
+				iat: 0,
+				sub: "",
+				refreshToken: "",
 			};
 			state.isLoading = false;
 		},

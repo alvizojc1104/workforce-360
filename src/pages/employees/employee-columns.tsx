@@ -5,16 +5,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { ROLES, SCOPES } from "@/features/auth/auth-types";
 
 export const employeeColumns = z.object({
 	id: z.string(),
 	email: z.string().email(),
-	password: z.string(),
+	role: z.array(
+		z.object({
+			name: z.enum(Object.values(ROLES) as [string, ...string[]]),
+			scope: z.enum(Object.values(SCOPES) as [string, ...string[]]),
+		})
+	),
 	name: z.string(),
-	role: z.string(),
 	avatar: z.string().url(),
-	creationAt: z.string().datetime(),
-	updatedAt: z.string().datetime(),
+	createdAt: z.string().datetime(),
 });
 
 export const employeeColumnsDef: ColumnDef<z.infer<typeof employeeColumns>>[] =
@@ -44,11 +49,6 @@ export const employeeColumnsDef: ColumnDef<z.infer<typeof employeeColumns>>[] =
 			enableSorting: false,
 			enableHiding: false,
 		},
-		{
-			accessorKey: "id",
-			header: "ID",
-		},
-
 		{
 			accessorKey: "name",
 			header: ({ column }) => (
@@ -86,16 +86,47 @@ export const employeeColumnsDef: ColumnDef<z.infer<typeof employeeColumns>>[] =
 			header: "Role",
 			cell(props) {
 				return (
-					<p className="capitalize text-sm">
-						{props.row.original.role}
-					</p>
+					<div>
+						{props.row.original.role.map((role) => (
+							<Badge
+								key={role.name}
+								variant={
+									role.name === ROLES.SUPER_ADMIN
+										? "SuperAdmin"
+										: role.name === ROLES.ADMIN
+										? "Admin"
+										: "Employee"
+								}
+								className="text-xs font-normal mr-1"
+							>
+								{role.name}
+							</Badge>
+						))}
+					</div>
 				);
 			},
 		},
 		{
-			accessorKey: "creationAt",
+			accessorKey: "createdAt",
 			header: "Creation At",
 			cell: ({ row }) =>
-				moment(row.original.creationAt).format("YYYY-MM-DD"),
+				moment(row.original.createdAt).format("YYYY-MM-DD"),
+		},
+		{
+			accessorKey: "actions",
+			header: "Actions",
+			cell: ({ row }) => (
+				<div className="flex gap-2">
+					<Button
+						variant={"outline"}
+						onClick={() =>
+							alert(`Edit employee with id: ${row.original.id}`)
+						}
+					>
+						Edit
+					</Button>
+					<Button variant={"destructive"}>Delete</Button>
+				</div>
+			),
 		},
 	];

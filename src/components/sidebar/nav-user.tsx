@@ -1,15 +1,4 @@
-"use client";
-
-import {
-	BadgeCheck,
-	Bell,
-	ChevronsUpDown,
-	CreditCard,
-	Loader2,
-	LogOut,
-	Sparkles,
-} from "lucide-react";
-
+import { ChevronsUpDown, Loader2, LogOut, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	DropdownMenu,
@@ -27,16 +16,16 @@ import {
 	DialogDescription,
 	DialogFooter,
 	DialogTitle,
-} from "./ui/dialog";
+} from "../ui/dialog";
 import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
-import { Button } from "./ui/button";
-import { UseMutationResult } from "@tanstack/react-query";
 import { useState } from "react";
+import { Button } from "../ui/button";
+import { UseMutationResult } from "@tanstack/react-query";
 
 export function NavUser({
 	user,
@@ -47,7 +36,7 @@ export function NavUser({
 		email: string;
 		avatar: string;
 	};
-	logout: UseMutationResult<void, Error, void, unknown>;
+	logout: UseMutationResult<void, unknown, void, unknown>;
 }) {
 	const { isMobile } = useSidebar();
 	const [openDialog, setOpenDialog] = useState(false);
@@ -67,7 +56,7 @@ export function NavUser({
 										alt={user.name}
 									/>
 									<AvatarFallback className="rounded-lg">
-										CN
+										WF
 									</AvatarFallback>
 								</Avatar>
 								<div className="grid flex-1 text-left text-sm leading-tight">
@@ -109,25 +98,11 @@ export function NavUser({
 								</div>
 							</DropdownMenuLabel>
 							<DropdownMenuSeparator />
+
 							<DropdownMenuGroup>
 								<DropdownMenuItem>
-									<Sparkles />
-									Upgrade to Pro
-								</DropdownMenuItem>
-							</DropdownMenuGroup>
-							<DropdownMenuSeparator />
-							<DropdownMenuGroup>
-								<DropdownMenuItem>
-									<BadgeCheck />
-									Account
-								</DropdownMenuItem>
-								<DropdownMenuItem>
-									<CreditCard />
-									Billing
-								</DropdownMenuItem>
-								<DropdownMenuItem>
-									<Bell />
-									Notifications
+									<User />
+									View Account
 								</DropdownMenuItem>
 							</DropdownMenuGroup>
 							<DropdownMenuSeparator />

@@ -4,7 +4,6 @@ import { Controller, Control, FieldValues, Path } from "react-hook-form";
 import {
 	FormField,
 	FormItem,
-	FormLabel,
 	FormControl,
 	FormMessage,
 } from "@/components/ui/form";
@@ -23,7 +22,6 @@ type GenericInputProps<T extends FieldValues> = {
 
 export function ReusableInput<T extends FieldValues>({
 	name,
-	label,
 	control,
 	defaultValue = "",
 	type = "text",
@@ -36,8 +34,6 @@ export function ReusableInput<T extends FieldValues>({
 			name={name as Path<T>}
 			render={() => (
 				<FormItem>
-					{label && <FormLabel>{label}</FormLabel>}
-
 					<FormControl>
 						<Controller
 							control={control}

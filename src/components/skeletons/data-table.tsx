@@ -22,7 +22,7 @@ export function DataTableSkeleton() {
 					</tr>
 				</thead>
 				<tbody>
-					{Array.from({ length: 10 }).map((_, rowIndex) => (
+					{Array.from({ length: 3 }).map((_, rowIndex) => (
 						<tr key={rowIndex} className="border-b">
 							{Array.from({ length: 5 }).map((_, colIndex) => (
 								<td key={colIndex} className="p-4">
